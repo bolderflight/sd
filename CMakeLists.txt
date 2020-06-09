@@ -4,9 +4,9 @@ if (DEFINED MCU)
 	set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/cmake/cortex.cmake")
 endif()
 # Project information
-project(SDFAT
+project(SD
 	VERSION 1.0
-	DESCRIPTION "SD FAT file system"
+	DESCRIPTION "SD driver"
 	LANGUAGES C CXX
 )
 if (DEFINED MCU)
