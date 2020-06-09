@@ -21,7 +21,7 @@ if (DEFINED MCU)
 	)
 	FetchContent_MakeAvailable(core)
 	# Add the library target
-	add_library(sdfat
+	add_library(sd
 		src/sd/FatFile.cc
 		src/sd/FatFileLFN.cc
 		src/sd/FatFilePrint.cc
@@ -68,12 +68,12 @@ if (DEFINED MCU)
 		include/sd/SpiDriver/SoftSPI.h
 	)
 	# Link libraries
-	target_link_libraries(sdfat
+	target_link_libraries(sd
 		PUBLIC
 			core
 	)
 	# Setup include directories 
-	target_include_directories(sdfat PUBLIC 
+	target_include_directories(sd PUBLIC 
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 		$<INSTALL_INTERFACE:include>
 	)
