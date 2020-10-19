@@ -2,6 +2,8 @@
 
 This library is a modified version of Bill Greiman's [SdFat](https://github.com/greiman/SdFat) library. It has been modified to work with Bolder Flight Systems' build system and only includes what's necessary for our microcontrollers. Extras, including original documentation, and examples from Greiman's library are copied here in the extras and examples directory. We have an issue setup to update documentation based on our modifications, but in the mean time, these resources are available.
 
+Bolder Flight Systems [Contributing Guidelines](#CONTRIBUTING.md)
+
 Below is the original README file:
 
 The Arduino SdFat library provides read/write access to FAT16/FAT32 file systems on SD/SDHC flash cards.
