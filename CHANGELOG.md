@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.0.0
+- Updated to SdFat-beta v2.x library in order to support Teensy 4.x
+
 ## v1.0.2
 - Added CONTRIBUTING
 - Updated *fetch_content* to use https instead of ssh
