@@ -5,7 +5,7 @@ if (DEFINED MCU)
 endif()
 # Project information
 project(SD
-	VERSION 1.0.2
+	VERSION 1.0.3
 	DESCRIPTION "SD driver"
 	LANGUAGES C CXX
 )
@@ -18,55 +18,47 @@ if (DEFINED MCU)
 	FetchContent_Declare(
 		core
 		GIT_REPOSITORY 	https://gitlab.com/bolderflight/software/core.git
-		GIT_TAG v1.0.3
+		GIT_TAG v2.0.3
 	)
 	FetchContent_MakeAvailable(core)
 	# Add the library target
 	add_library(sd
-		src/sd/FatFile.cc
-		src/sd/FatFileLFN.cc
-		src/sd/FatFilePrint.cc
-		src/sd/FatFileSFN.cc
-		src/sd/FatVolume.cc
-		src/sd/FmtNumber.cc
-		src/sd/fstream.cc
-		src/sd/istream.cc
-		src/sd/MinimumSerial.cc
-		src/sd/ostream.cc
-		src/sd/SdioCardEX.cc
-		src/sd/SdioTeensy.cc
-		src/sd/StdioStream.cc
-		include/sd/BlockDriver.h
-		include/sd/FreeStack.h
-		include/sd/MinimumSerial.h
-		include/sd/SdFat.h
-		include/sd/SdFatConfig.h
-		include/sd/sdios.h
-		include/sd/SysCall.h
-		include/sd/FatLib/ArduinoFiles.h
-		include/sd/FatLib/ArduinoStream.h
-		include/sd/FatLib/BaseBlockDriver.h
-		include/sd/FatLib/bufstream.h
-		include/sd/FatLib/FatApiConstants.h
-		include/sd/FatLib/FatFile.h
-		include/sd/FatLib/FatFileSystem.h
-		include/sd/FatLib/FatLibConfig.h
-		include/sd/FatLib/FatLib.h
-		include/sd/FatLib/FatStructs.h
-		include/sd/FatLib/FatVolume.h
-		include/sd/FatLib/FmtNumber.h
-		include/sd/FatLib/fstream.h
-		include/sd/FatLib/ios.h
-		include/sd/FatLib/iostream.h
-		include/sd/FatLib/istream.h
-		include/sd/FatLib/ostream.h
-		include/sd/FatLib/StdioStream.h
-		include/sd/SdCard/SdInfo.h
-		include/sd/SdCard/SdioCard.h
-		include/sd/SpiDriver/DigitalPin.h
-		include/sd/SpiDriver/SdSpiBaseDriver.h
-		include/sd/SpiDriver/SdSpiDriver.h
-		include/sd/SpiDriver/SoftSPI.h
+		src/sd/FreeStack.cpp
+		src/sd/MinimumSerial.cpp
+		src/sd/SpiDriver/SdSpiTeensy3.cpp
+		src/sd/SpiDriver/SdSpiChipSelect.cpp
+		src/sd/SdCard/SdCardInfo.cpp
+		src/sd/SdCard/SdioTeensy.cpp
+		src/sd/SdCard/SdSpiCard.cpp
+		src/sd/iostream/istream.cpp
+		src/sd/iostream/ostream.cpp
+		src/sd/iostream/StdioStream.cpp
+		src/sd/iostream/StreamBaseClass.cpp
+		src/sd/FsLib/FsFile.cpp
+		src/sd/FsLib/FsNew.cpp
+		src/sd/FsLib/FsVolume.cpp
+		src/sd/FatLib/FatDbg.cpp
+		src/sd/FatLib/FatFile.cpp
+		src/sd/FatLib/FatFileLFN.cpp
+		src/sd/FatLib/FatFilePrint.cpp
+		src/sd/FatLib/FatFileSFN.cpp
+		src/sd/FatLib/FatFormatter.cpp
+		src/sd/FatLib/FatPartition.cpp
+		src/sd/FatLib/FatVolume.cpp
+		src/sd/ExFatLib/ExFatDbg.cpp
+		src/sd/ExFatLib/ExFatFile.cpp
+		src/sd/ExFatLib/ExFatFilePrint.cpp
+		src/sd/ExFatLib/ExFatFileWrite.cpp
+		src/sd/ExFatLib/ExFatFormatter.cpp
+		src/sd/ExFatLib/ExFatPartition.cpp
+		src/sd/ExFatLib/ExFatVolume.cpp
+		src/sd/ExFatLib/upcase.cpp
+		src/sd/common/FmtNumber.cpp
+		src/sd/common/FsCache.cpp
+		src/sd/common/FsDateTime.cpp
+		src/sd/common/FsStructs.cpp
+		src/sd/common/PrintBasic.cpp
+		src/sd/common/SysCallBareUno.cpp
 	)
 	# Link libraries
 	target_link_libraries(sd
@@ -79,3 +71,26 @@ if (DEFINED MCU)
 		$<INSTALL_INTERFACE:include>
 	)
 endif()
+
+
+# Example and test if this project is built separately
+if (PROJECT_NAME STREQUAL CMAKE_PROJECT_NAME)
+	if (DEFINED MCU)		
+		# Add the sd example target
+		add_executable(sd_example examples/sd.cc)
+		# Add the includes
+		target_include_directories(sd_example PUBLIC 
+			$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+			$<INSTALL_INTERFACE:include>
+		)
+		# Link libraries to the example target
+		target_link_libraries(sd_example
+			PRIVATE 
+				sd
+		)
+		# Add hex and upload targets
+		include(${CMAKE_SOURCE_DIR}/cmake/flash_mcu.cmake)
+		FlashMcu(sd_example ${MCU})
+	endif()
+endif()
+
