@@ -389,7 +389,7 @@ inline ios_base& uppercase(ios_base& str) {
 class ios : public ios_base {
  public:
   /** Create ios with no error flags set */
-  ios() {}
+  ios() : m_iostate(0) {}
 
   /** \return null pointer if fail() is true. */
   operator const void*() const {
@@ -443,6 +443,6 @@ class ios : public ios_base {
   }
 
  private:
-  iostate m_iostate = 0;
+  iostate m_iostate;
 };
 #endif  // ios_h

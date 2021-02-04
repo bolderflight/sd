@@ -70,20 +70,23 @@ static uint16_t lfnGetChar(DirLfn_t* ldir, uint8_t i) {
   return 0;
 }
 //------------------------------------------------------------------------------
-static size_t lfnGetName(DirLfn_t* ldir, char* name, size_t n) {
+static bool lfnGetName(DirLfn_t* ldir, char* name, size_t n) {
   uint8_t i;
   size_t k = 13*((ldir->order & 0X1F) - 1);
   for (i = 0; i < 13; i++) {
     uint16_t c = lfnGetChar(ldir, i);
-    if (c == 0 || k >= (n - 1)) {
-      k = n - 1;
+    if (c == 0 || k >= n) {
       break;
     }
     name[k++] = c >= 0X7F ? '?' : c;
   }
-  // Terminate with zero byte.
-  name[k] = '\0';
-  return k;
+  // Terminate with zero byte if name fits.
+  if (k < n && (ldir->order & FAT_ORDER_LAST_LONG_ENTRY)) {
+    name[k] = 0;
+  }
+  // Truncate if name is too long.
+  name[n - 1] = 0;
+  return true;
 }
 //------------------------------------------------------------------------------
 inline bool lfnLegalChar(uint8_t c) {
@@ -119,8 +122,7 @@ static void lfnPutName(DirLfn_t* ldir, const char* name, size_t n) {
   }
 }
 //==============================================================================
-size_t FatFile::getName(char* name, size_t size) {
-  size_t n = 0;
+bool FatFile::getName(char* name, size_t size) {
   FatFile dirFile;
   DirLfn_t* ldir;
   if (!isOpen() || size < 13) {
@@ -152,21 +154,20 @@ size_t FatFile::getName(char* name, size_t size) {
       DBG_FAIL_MACRO;
       goto fail;
     }
-    n = lfnGetName(ldir, name, size);
-    if (n == 0) {
+    if (!lfnGetName(ldir, name, size)) {
       DBG_FAIL_MACRO;
       goto fail;
     }
     if (ldir->order & FAT_ORDER_LAST_LONG_ENTRY) {
-      return n;
+      return true;
     }
   }
   // Fall into fail.
   DBG_FAIL_MACRO;
 
  fail:
-  name[0] = '\0';
-  return 0;
+  name[0] = 0;
+  return false;
 }
 //------------------------------------------------------------------------------
 bool FatFile::openCluster(FatFile* file) {

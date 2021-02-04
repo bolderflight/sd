@@ -25,18 +25,19 @@ if (DEFINED MCU)
 	add_library(sd
 		src/sd/FreeStack.cpp
 		src/sd/MinimumSerial.cpp
-		src/sd/SpiDriver/SdSpiTeensy3.cpp
 		src/sd/SpiDriver/SdSpiChipSelect.cpp
+		src/sd/SpiDriver/SdSpiTeensy3.cpp
 		src/sd/SdCard/SdCardInfo.cpp
-		src/sd/SdCard/SdioTeensy.cpp
 		src/sd/SdCard/SdSpiCard.cpp
-		src/sd/iostream/istream.cpp
-		src/sd/iostream/ostream.cpp
+		src/sd/SdCard/SdioTeensy.cpp
 		src/sd/iostream/StdioStream.cpp
 		src/sd/iostream/StreamBaseClass.cpp
-		src/sd/FsLib/FsFile.cpp
-		src/sd/FsLib/FsNew.cpp
-		src/sd/FsLib/FsVolume.cpp
+		src/sd/iostream/istream.cpp
+		src/sd/iostream/ostream.cpp
+		src/sd/FsLib/FsFile.h
+		src/sd/FsLib/FsLib.h
+		src/sd/FsLib/FsNew.h
+		src/sd/FsLib/FsVolume.h
 		src/sd/FatLib/FatDbg.cpp
 		src/sd/FatLib/FatFile.cpp
 		src/sd/FatLib/FatFileLFN.cpp

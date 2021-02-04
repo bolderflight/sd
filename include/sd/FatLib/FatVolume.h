@@ -24,8 +24,8 @@
  */
 #ifndef FatVolume_h
 #define FatVolume_h
-#include "FatPartition.h"
-#include "FatFile.h"
+#include "sd/FatLib/FatPartition.h"
+#include "sd/FatLib/FatFile.h"
 #include <string>
 /**
  * \file
@@ -52,7 +52,7 @@ class FatVolume : public  FatPartition {
     if (!chdir()) {
       return false;
     }
-    if (setCwv || !m_cwv) {
+    if (setCwv) {
       m_cwv = this;
     }
     return true;

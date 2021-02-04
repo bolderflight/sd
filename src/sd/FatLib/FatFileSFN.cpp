@@ -28,7 +28,7 @@
 #include "sd/FatLib/FatFile.h"
 #include "sd/FatLib/FatVolume.h"
 //------------------------------------------------------------------------------
-size_t FatFile::getSFN(char* name) {
+bool FatFile::getSFN(char* name) {
   uint8_t j = 0;
   uint8_t lcBit = FAT_CASE_LC_BASE;
   DirFat_t* dir;
@@ -40,7 +40,7 @@ size_t FatFile::getSFN(char* name) {
   if (isRoot()) {
     name[0] = '/';
     name[1] = '\0';
-    return 1;
+    return true;
   }
   // cache entry
   dir = reinterpret_cast<DirFat_t*>(cacheDirEntry(FsCache::CACHE_FOR_READ));
@@ -64,12 +64,11 @@ size_t FatFile::getSFN(char* name) {
     }
     name[j++] = c;
   }
-  name[j] = '\0';
-  return j;
+  name[j] = 0;
+  return true;
 
  fail:
-  name[0] = '\0';
-  return 0;
+  return false;
 }
 //------------------------------------------------------------------------------
 size_t FatFile::printSFN(print_t* pr) {
@@ -85,7 +84,7 @@ size_t FatFile::printSFN(print_t* pr) {
 }
 #if !USE_LONG_FILE_NAMES
 //------------------------------------------------------------------------------
-size_t FatFile::getName(char* name, size_t size) {
+bool FatFile::getName(char* name, size_t size) {
   return size < 13 ? 0 : getSFN(name);
 }
 //------------------------------------------------------------------------------

@@ -28,10 +28,9 @@
  * \file
  * \brief FsVolume include file.
  */
-#include "FsNew.h"
-#include "../FatLib/FatLib.h"
-#include "../ExFatLib/ExFatLib.h"
-
+#include "sd/FsLib/FsNew.h"
+#include "sd/FatLib/FatLib.h"
+#include "sd/ExFatLib/ExFatLib.h"
 #include <string>
 
 class FsFile;
@@ -41,7 +40,7 @@ class FsFile;
  */
 class FsVolume {
  public:
-  FsVolume() {}
+  FsVolume() : m_fVol(nullptr), m_xVol(nullptr) {}
 
   ~FsVolume() {end();}
 
@@ -51,15 +50,42 @@ class FsVolume {
    * \return true for success or false for failure.
    */
   bool begin(BlockDevice* blockDev);
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  // Use sectorsPerCluster(). blocksPerCluster() will be removed in the future.
-  uint32_t blocksPerCluster() __attribute__ ((deprecated)) {return sectorsPerCluster();} //NOLINT
-#endif  // DOXYGEN_SHOULD_SKIP_THIS
   /** \return the number of bytes in a cluster. */
   uint32_t bytesPerCluster() const {
     return m_fVol ? m_fVol->bytesPerCluster() :
            m_xVol ? m_xVol->bytesPerCluster() : 0;
   }
+  /** Change global working volume to this volume. */
+  void chvol() {m_cwv = this;}
+  /** \return The total number of clusters in the volume. */
+  uint32_t clusterCount() const {
+    return m_fVol ? m_fVol->clusterCount() :
+           m_xVol ? m_xVol->clusterCount() : 0;
+  }
+  /** \return The logical sector number for the start of file data. */
+  uint32_t dataStartSector() const {
+    return m_fVol ? m_fVol->dataStartSector() :
+           m_xVol ? m_xVol->clusterHeapStartSector() : 0;
+  }
+  /** \return The logical sector number for the start of the first FAT. */
+  uint32_t fatStartSector() const {
+    return m_fVol ? m_fVol->fatStartSector() :
+           m_xVol ? m_xVol->fatStartSector() : 0;
+  }
+  /** \return the free cluster count. */
+  uint32_t freeClusterCount() const {
+    return m_fVol ? m_fVol->freeClusterCount() :
+           m_xVol ? m_xVol->freeClusterCount() : 0;
+  }
+  /** \return The volume's cluster size in sectors. */
+  uint32_t sectorsPerCluster() const {
+    return m_fVol ? m_fVol->sectorsPerCluster() :
+           m_xVol ? m_xVol->sectorsPerCluster() : 0;
+  }
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  // Use sectorsPerCluster(). blocksPerCluster() will be removed in the future.
+  uint32_t blocksPerCluster() __attribute__ ((deprecated)) {return sectorsPerCluster();} //NOLINT
+#endif  // DOXYGEN_SHOULD_SKIP_THIS
   /**
    * Set volume working directory to root.
    * \return true for success or false for failure.
@@ -77,18 +103,6 @@ class FsVolume {
     return m_fVol ? m_fVol->chdir(path) :
            m_xVol ? m_xVol->chdir(path) : false;
   }
-  /** Change global working volume to this volume. */
-  void chvol() {m_cwv = this;}
-  /** \return The total number of clusters in the volume. */
-  uint32_t clusterCount() const {
-    return m_fVol ? m_fVol->clusterCount() :
-           m_xVol ? m_xVol->clusterCount() : 0;
-  }
-  /** \return The logical sector number for the start of file data. */
-  uint32_t dataStartSector() const {
-    return m_fVol ? m_fVol->dataStartSector() :
-           m_xVol ? m_xVol->clusterHeapStartSector() : 0;
-  }
   /** free dynamic memory and end access to volume */
   void end() {
     m_fVol = nullptr;
@@ -104,31 +118,12 @@ class FsVolume {
     return m_fVol ? m_fVol->exists(path) :
            m_xVol ? m_xVol->exists(path) : false;
   }
-  /** \return The logical sector number for the start of the first FAT. */
-  uint32_t fatStartSector() const {
-    return m_fVol ? m_fVol->fatStartSector() :
-           m_xVol ? m_xVol->fatStartSector() : 0;
-  }
   /** \return Partition type, FAT_TYPE_EXFAT, FAT_TYPE_FAT32,
    *          FAT_TYPE_FAT16, or zero for error.
    */
   uint8_t fatType() const {
     return m_fVol ? m_fVol->fatType() :
            m_xVol ? m_xVol->fatType() : 0;
-  }
-  /** \return the free cluster count. */
-  uint32_t freeClusterCount() const {
-    return m_fVol ? m_fVol->freeClusterCount() :
-           m_xVol ? m_xVol->freeClusterCount() : 0;
-  }
-  /**
-   * Check for BlockDevice busy.
-   *
-   * \return true if busy else false.
-   */
-  bool isBusy() {
-    return m_fVol ? m_fVol->isBusy() :
-           m_xVol ? m_xVol->isBusy() : false;
   }
   /** List directory contents.
    *
@@ -232,11 +227,6 @@ class FsVolume {
   bool rmdir(const char *path) {
     return m_fVol ? m_fVol->rmdir(path) :
            m_xVol ? m_xVol->rmdir(path) : false;
-  }
-  /** \return The volume's cluster size in sectors. */
-  uint32_t sectorsPerCluster() const {
-    return m_fVol ? m_fVol->sectorsPerCluster() :
-           m_xVol ? m_xVol->sectorsPerCluster() : 0;
   }
 #if ENABLE_ARDUINO_SERIAL
   /** List directory contents.
@@ -380,8 +370,8 @@ class FsVolume {
   FsVolume& operator=(const FsVolume& from);
 
   static FsVolume* m_cwv;
-  FatVolume*   m_fVol = nullptr;
-  ExFatVolume* m_xVol = nullptr;
+  FatVolume*   m_fVol;
+  ExFatVolume* m_xVol;
   BlockDevice* m_blockDev;
 };
 #endif  // FsVolume_h

@@ -24,9 +24,8 @@
  */
 #ifndef ExFatVolume_h
 #define ExFatVolume_h
-#include "ExFatPartition.h"
-#include "ExFatFile.h"
-#include <string>
+#include "sd/ExFatLib/ExFatPartition.h"
+#include "sd/ExFatLib/ExFatFile.h"
 //==============================================================================
 /**
  * \class ExFatVolume
@@ -34,7 +33,8 @@
  */
 class ExFatVolume : public ExFatPartition {
  public:
-  ExFatVolume() {}
+  ExFatVolume() {
+  }
   /**
    * Initialize an FatVolume object.
    * \param[in] dev Device block driver.
@@ -49,7 +49,7 @@ class ExFatVolume : public ExFatPartition {
     if (!chdir()) {
       return false;
     }
-    if (setCwv || !m_cwv) {
+    if (setCwv) {
       m_cwv = this;
     }
     return true;

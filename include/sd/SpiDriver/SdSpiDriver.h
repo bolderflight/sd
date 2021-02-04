@@ -43,24 +43,6 @@ void sdCsInit(SdCsPin_t pin);
  */
 void sdCsWrite(SdCsPin_t pin, bool level);
 //------------------------------------------------------------------------------
-/** SPI bus is share with other devices. */
-const uint8_t SHARED_SPI = 0;
-#if ENABLE_DEDICATED_SPI
-/** The SD is the only device on the SPI bus. */
-const uint8_t DEDICATED_SPI = 1;
-/**
- * \param[in] opt option field of SdSpiConfig.
- * \return true for shared SPI.
- */
-inline bool spiOptionShared(uint8_t opt) {return !(opt & DEDICATED_SPI);}
-#else  // ENABLE_DEDICATED_SPI
-/**
- * \param[in] opt option field of SdSpiConfig.
- * \return true for shared SPI.
- */
-inline bool spiOptionShared(uint8_t opt) {(void)opt; return true;}
-#endif  // ENABLE_DEDICATED_SPI
-//------------------------------------------------------------------------------
 /** SPISettings for SCK frequency in Hz. */
 #define SD_SCK_HZ(maxSpeed) (maxSpeed)
 /** SPISettings for SCK frequency in MHz. */
@@ -81,6 +63,10 @@ inline bool spiOptionShared(uint8_t opt) {(void)opt; return true;}
 /** Set SCK rate to 500 kHz for AVR. */
 #define SPI_SIXTEENTH_SPEED SD_SCK_HZ(500000)
 //------------------------------------------------------------------------------
+/** The SD is the only device on the SPI bus. */
+#define DEDICATED_SPI 0X80
+/** SPI bus is share with other devices. */
+#define SHARED_SPI 0
 #if SPI_DRIVER_SELECT < 2
 #include "core/core.h"
 /** Port type for Arduino SPI hardware driver. */
@@ -120,27 +106,29 @@ class SdSpiConfig {
    * \param[in] maxSpeed Maximum SCK frequency.
    */
   SdSpiConfig(SdCsPin_t cs, uint8_t opt, uint32_t maxSpeed) :
-    csPin(cs), options(opt), maxSck(maxSpeed) {}
+    csPin(cs), options(opt), maxSck(maxSpeed), spiPort(nullptr) {}
   /** SdSpiConfig constructor.
    *
    * \param[in] cs Chip select pin.
    * \param[in] opt Options.
    */
-  SdSpiConfig(SdCsPin_t cs, uint8_t opt) : csPin(cs), options(opt) {}
+  SdSpiConfig(SdCsPin_t cs, uint8_t opt) :
+    csPin(cs), options(opt), maxSck(SD_SCK_MHZ(50)), spiPort(nullptr)  {}
   /** SdSpiConfig constructor.
    *
    * \param[in] cs Chip select pin.
    */
-  explicit SdSpiConfig(SdCsPin_t cs) : csPin(cs) {}
+  explicit SdSpiConfig(SdCsPin_t cs) : csPin(cs), options(SHARED_SPI),
+                                     maxSck(SD_SCK_MHZ(50)), spiPort(nullptr) {}
 
   /** Chip select pin. */
   const SdCsPin_t csPin;
   /** Options */
-  const uint8_t options = 0;
+  const uint8_t options;
   /** Max SCK frequency */
-  const uint32_t maxSck = SD_SCK_MHZ(50);
+  const uint32_t maxSck;
   /** SPI port */
-  SpiPort_t* spiPort = nullptr;
+  SpiPort_t* spiPort;
 };
 #if SPI_DRIVER_SELECT < 2
 #include "SdSpiArduinoDriver.h"

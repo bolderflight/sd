@@ -28,8 +28,7 @@
  * \file
  * \brief \ref ostream class
  */
-#include "ios.h"
-#include <string>
+#include "sd/iostream/ios.h"
 //==============================================================================
 /**
  * \class ostream

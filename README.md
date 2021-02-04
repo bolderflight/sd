@@ -6,20 +6,11 @@ Bolder Flight Systems [Contributing Guidelines](#CONTRIBUTING.md)
 
 Below is the original README file:
 
-### Warning: This version, 2.0.5-beta.1, has many internal changes so may be unstable.
+### Warning: This is SdFat Version 2.
 
-### There are major changes to Teensy SDIO.  See examples TeensyDmaAdcLogger and TeensySdioLogger.
+Earlier releases of Version 1 are here:
 
-The release version of SdFat Version 2 is here:
-
-https://github.com/greiman/SdFat
-
-This library is in development, features may change and
-it may have bugs. I am posting this version to get comments and
-help finding bugs/compatibility problems.
-
-You can help by posting issues for problems you find.  I am doing a great deal
-of testing but actual applications make the best test cases.
+https://github.com/greiman/SdFat/releases
 
 SdFat Version 2 supports FAT16/FAT32 and exFAT SD cards. It is mostly
 backward compatible with SdFat Version 1 for FAT16/FAT32 cards.
