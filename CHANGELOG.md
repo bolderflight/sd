@@ -1,7 +1,11 @@
 # Changelog
 
+## v2.0.1
+- Updated to support core v2.0.4
+- Switched sources to GitHub
+
 ## v2.0.0
-- Updated to SdFat-beta v2.x library in order to support Teensy 4.x
+- Updated to SdFat v2.x library in order to support Teensy 4.x
 
 ## v1.0.2
 - Added CONTRIBUTING
