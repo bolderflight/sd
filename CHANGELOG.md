@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.0.2
+- Updated to C++20
+
 ## v2.0.1
 - Updated to support core v2.0.4
 - Switched sources to GitHub

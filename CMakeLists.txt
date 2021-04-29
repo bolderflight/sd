@@ -5,7 +5,7 @@ if (DEFINED MCU)
 endif()
 # Project information
 project(SD
-	VERSION 2.0.1
+	VERSION 2.0.2
 	DESCRIPTION "SD driver"
 	LANGUAGES C CXX
 )
