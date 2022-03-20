@@ -58,14 +58,10 @@ class SysCall {
   static void yield();
 };
 #if ENABLE_ARDUINO_FEATURES
-#if defined(ARDUINO)
 /** Use Arduino Print. */
 typedef Print print_t;
 /** Use Arduino Stream. */
 typedef Stream stream_t;
-#else  // defined(ARDUINO)
-#error "Unknown system"
-#endif  // defined(ARDUINO)
 //------------------------------------------------------------------------------
 #ifndef F
 /** Define macro for strings stored in flash. */
